@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TermHeader from "../components/TermHeader";
 import { useTracker } from "../TrackerContext";
-import { WEEK_DATA, PHASES, CATEGORY_LABEL } from "../data/weekData";
+import { WEEK_DATA, PHASES } from "../data/weekData";
 import { getQuoteOfDay } from "../data/quotes";
 import { api } from "../api";
 
@@ -35,7 +35,9 @@ export default function Dashboard() {
   const phaseData = useMemo(() => {
     return PHASES.map((phase) => {
       const ids = [];
-      phase.weeks.forEach((w) => ids.push(`${w}-dsa`, `${w}-core`, `${w}-project`));
+      phase.weeks.forEach((w) => {
+        for (let i = 1; i <= 7; i++) ids.push(`${w}-day${i}`);
+      });
       const done = tasks.filter((t) => ids.includes(t.taskId) && t.done).length;
       const pctVal = ids.length ? Math.round((done / ids.length) * 100) : 0;
       return { name: `P${phase.id}`, pct: pctVal };
@@ -47,11 +49,13 @@ export default function Dashboard() {
   let nextUp = null;
   outer: for (const phase of PHASES) {
     for (const week of phase.weeks) {
-      for (const cat of ["dsa", "core", "project"]) {
-        const id = `${week}-${cat}`;
+      const wd = WEEK_DATA[week];
+      if (!wd || !wd.days) continue;
+      for (const d of wd.days) {
+        const id = `${week}-day${d.day}`;
         const t = taskMap[id];
         if (t && !t.done) {
-          nextUp = { week, cat, label: WEEK_DATA[week][cat] };
+          nextUp = { week, day: d.day, label: d.topics };
           break outer;
         }
       }
@@ -127,7 +131,7 @@ export default function Dashboard() {
         <div className="card plain">
           <h2>Next up — Week {nextUp.week}</h2>
           <div className="task">
-            <span className="tag">{CATEGORY_LABEL[nextUp.cat]}</span>
+            <span className="tag">Day {nextUp.day}</span>
             <span>{nextUp.label}</span>
           </div>
           <Link to="/roadmap" className="back-link" style={{ marginTop: 10 }}>

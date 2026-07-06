@@ -1,7 +1,7 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import TermHeader from "../components/TermHeader";
 import { useTracker } from "../TrackerContext";
-import { WEEK_DATA, PHASES, CATEGORY_LABEL } from "../data/weekData";
+import { WEEK_DATA, PHASES } from "../data/weekData";
 
 export default function PhaseDetail() {
   const { phaseId } = useParams();
