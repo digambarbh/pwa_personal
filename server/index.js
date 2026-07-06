@@ -35,8 +35,18 @@ app.use("/api/scores", scoreRoutes);
 app.use("/api/study", studyRoutes);
 app.use("/api/notes", noteRoutes);
 
-app.get("/", (req, res) => res.send("Placement Tracker API is running."));
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const clientDistPath = path.join(__dirname, "../client/dist");
+app.use(express.static(clientDistPath));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
+});
 async function start() {
   if (!process.env.MONGODB_URI) {
     console.error("MONGODB_URI is missing. Copy .env.example to .env and fill in your real password.");

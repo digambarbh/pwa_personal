@@ -1,0 +1,9 @@
+{
+  "name": "placement-tracker-fullstack",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npm start --prefix server",
+    "install": "npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client"
+  }
+}

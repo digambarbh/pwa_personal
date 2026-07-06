@@ -26,9 +26,18 @@ export default function Dashboard() {
   } = useTracker();
 
   const [studySummary, setStudySummary] = useState(null);
-  const quote = useMemo(() => getQuoteOfDay(), []);
+  const [quote, setQuote] = useState(getQuoteOfDay());
 
   useEffect(() => {
+    fetch("https://dummyjson.com/quotes/random")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.quote) {
+          setQuote(data.quote);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch quote:", err));
+    
     api.getStudySummary().then(setStudySummary).catch(() => {});
   }, []);
 
