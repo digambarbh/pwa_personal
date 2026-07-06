@@ -7,7 +7,6 @@ import apiRoutes from "./routes/api.js";
 import companyRoutes from "./routes/companies.js";
 import scoreRoutes from "./routes/scores.js";
 import studyRoutes from "./routes/study.js";
-import  authGate from"./middleware/authGate.js";
 import pushRoutes from "./routes/push.js";
 import startReminderScheduler from "./utils/reminderScheduler.js";
 
@@ -35,7 +34,6 @@ app.use(
   })
 );
 app.use(express.json());
-app.use("/api", authGate);
 app.use("/api/push", pushRoutes);
 startReminderScheduler();
 app.use("/api", apiRoutes);

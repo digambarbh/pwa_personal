@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./styles.css";
-import PinLock from "./components/PinLock";
 import { registerSW } from "virtual:pwa-register";
 
 registerSW({ immediate: true });
@@ -11,9 +10,7 @@ registerSW({ immediate: true });
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <PinLock>
-        <App />
-      </PinLock>
+      <App />
     </BrowserRouter>
   </React.StrictMode>
 );

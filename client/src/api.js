@@ -1,12 +1,9 @@
 const BASE = import.meta.env.VITE_API_URL || "/api";
-const PIN_KEY = "app_pin";
 
 async function request(path, options = {}) {
-  const pin = localStorage.getItem(PIN_KEY);
   const res = await fetch(`${BASE}${path}`, {
     headers: {
       "Content-Type": "application/json",
-      ...(pin ? { "x-app-pin": pin } : {}),
     },
     ...options,
   });

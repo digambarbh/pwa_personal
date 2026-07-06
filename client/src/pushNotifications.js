@@ -22,10 +22,20 @@ export async function subscribeToPush() {
     applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
   });
 
-  const pin = localStorage.getItem("app_pin");
   await fetch(`${BASE}/push/subscribe`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...(pin ? { "x-app-pin": pin } : {}) },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(subscription),
   });
+}
+
+export async function sendTestNotification() {
+  const res = await fetch(`${BASE}/push/test`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Test notification failed: ${res.status} ${text}`);
+  }
+  return res.json();
 }
