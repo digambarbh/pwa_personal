@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const BASE = import.meta.env.VITE_API_URL || "/api";
+const BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "/api" : "https://pwa-personal-backend.onrender.com/api");
 const STORAGE_KEY = "app_pin";
 
 async function verify(candidate) {
