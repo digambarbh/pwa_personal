@@ -22,18 +22,22 @@ export default function PhaseDetail() {
 
         {phase.weeks.map((week) => {
           const wd = WEEK_DATA[week];
+          if (!wd || !wd.days) return null;
           return (
             <div className="week" key={week}>
               <div className="week-label">Week {week}</div>
-              {["dsa", "core", "project"].map((cat) => {
-                const id = `${week}-${cat}`;
+              {wd.days.map((d) => {
+                const id = `${week}-day${d.day}`;
                 const t = taskMap[id];
                 const done = !!t?.done;
                 return (
-                  <label className="task" key={id}>
-                    <input type="checkbox" checked={done} onChange={() => toggleTask(id)} />
-                    <span className="tag">{CATEGORY_LABEL[cat]}</span>
-                    <span className={done ? "done" : ""}>{wd[cat]}</span>
+                  <label className="task" key={id} style={{ alignItems: 'flex-start', padding: '12px 16px' }}>
+                    <input type="checkbox" checked={done} onChange={() => toggleTask(id)} style={{ marginTop: '4px' }} />
+                    <span className="tag" style={{ minWidth: '50px', textAlign: 'center' }}>Day {d.day}</span>
+                    <div className={done ? "done" : ""} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontWeight: '500' }}>{d.topics}</span>
+                      <span style={{ fontSize: '0.85em', color: 'var(--dim)' }}>{d.exercise}</span>
+                    </div>
                   </label>
                 );
               })}

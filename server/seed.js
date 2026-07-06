@@ -16,14 +16,17 @@ async function seed() {
   await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 15000 });
   console.log("Connected to MongoDB");
 
+  console.log("Clearing existing tasks...");
+  await Task.deleteMany({});
+
   const ops = [];
-  for (const [week, cats] of Object.entries(WEEK_DATA)) {
-    for (const category of ["dsa", "core", "project"]) {
-      const taskId = `${week}-${category}`;
+  for (const [week, data] of Object.entries(WEEK_DATA)) {
+    for (const d of data.days) {
+      const taskId = `${week}-day${d.day}`;
       ops.push(
         Task.updateOne(
           { taskId },
-          { $setOnInsert: { taskId, week: Number(week), category, done: false } },
+          { $setOnInsert: { taskId, week: Number(week), day: d.day, done: false } },
           { upsert: true }
         )
       );

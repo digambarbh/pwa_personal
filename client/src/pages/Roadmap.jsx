@@ -18,7 +18,11 @@ export default function Roadmap() {
 
       {PHASES.map((phase) => {
         const ids = [];
-        phase.weeks.forEach((w) => ids.push(`${w}-dsa`, `${w}-core`, `${w}-project`));
+        phase.weeks.forEach((w) => {
+          for (let i = 1; i <= 7; i++) {
+            ids.push(`${w}-day${i}`);
+          }
+        });
         const done = ids.filter((id) => taskMap[id]?.done).length;
 
         return (
