@@ -84,7 +84,7 @@ export function TrackerProvider({ children }) {
     const t = todayStr();
     setStreak((prev) => (prev.includes(t) ? prev : [...prev, t]));
     try {
-      const updated = await api.checkinToday();
+      const updated = await api.checkinToday(t);
       setStreak(updated);
     } catch (e) {
       setError(e.message);

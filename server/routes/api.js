@@ -44,7 +44,7 @@ router.get("/streak", async (req, res) => {
 });
 
 router.post("/streak/checkin", async (req, res) => {
-  const date = todayStr();
+  const date = req.body.date || todayStr();
   await StreakDay.updateOne({ date }, { $setOnInsert: { date } }, { upsert: true });
   const days = await StreakDay.find().sort({ date: 1 }).lean();
   res.json(days.map((d) => d.date));
