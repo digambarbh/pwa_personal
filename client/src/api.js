@@ -1,8 +1,13 @@
 const BASE = import.meta.env.VITE_API_URL || "/api";
+const PIN_KEY = "app_pin";
 
 async function request(path, options = {}) {
+  const pin = localStorage.getItem(PIN_KEY);
   const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(pin ? { "x-app-pin": pin } : {}),
+    },
     ...options,
   });
   if (!res.ok) {
@@ -19,16 +24,13 @@ export const api = {
   getStreak: () => request("/streak"),
   checkinToday: () => request("/streak/checkin", { method: "POST" }),
   resetAll: () => request("/reset", { method: "POST" }),
-
   getCompanies: () => request("/companies"),
   addCompany: (data) => request("/companies", { method: "POST", body: JSON.stringify(data) }),
   updateCompany: (id, data) => request(`/companies/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteCompany: (id) => request(`/companies/${id}`, { method: "DELETE" }),
-
   getScores: () => request("/scores"),
   addScore: (data) => request("/scores", { method: "POST", body: JSON.stringify(data) }),
   deleteScore: (id) => request(`/scores/${id}`, { method: "DELETE" }),
-
   getStudySessions: () => request("/study"),
   logStudySession: (data) => request("/study", { method: "POST", body: JSON.stringify(data) }),
   getStudySummary: () => request("/study/summary"),

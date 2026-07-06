@@ -33,6 +33,23 @@ export function TrackerProvider({ children }) {
   const [streak, setStreak] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [theme, setTheme] = useState("dark");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.className = theme;
+    window.localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  }, []);
 
   const loadAll = useCallback(async () => {
     try {
@@ -114,6 +131,8 @@ export function TrackerProvider({ children }) {
     resetAll,
     refresh: loadAll,
     todayStr,
+    theme,
+    toggleTheme,
   };
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>;

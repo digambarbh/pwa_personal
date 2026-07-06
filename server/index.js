@@ -7,6 +7,9 @@ import apiRoutes from "./routes/api.js";
 import companyRoutes from "./routes/companies.js";
 import scoreRoutes from "./routes/scores.js";
 import studyRoutes from "./routes/study.js";
+import  authGate from"./middleware/authGate.js";
+import pushRoutes from "./routes/push.js";
+import startReminderScheduler from "./utils/reminderScheduler.js";
 
 // Force Node to resolve DNS via Google/Cloudflare instead of your network's
 // default DNS server. Fixes "querySrv ETIMEOUT" on networks whose DNS doesn't
@@ -18,6 +21,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" }));
 app.use(express.json());
+app.use("/api", authGate);
+app.use("/api/push", pushRoutes);
+startReminderScheduler();
 app.use("/api", apiRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/scores", scoreRoutes);
