@@ -7,8 +7,6 @@ import apiRoutes from "./routes/api.js";
 import companyRoutes from "./routes/companies.js";
 import scoreRoutes from "./routes/scores.js";
 import studyRoutes from "./routes/study.js";
-import pushRoutes from "./routes/push.js";
-import startReminderScheduler from "./utils/reminderScheduler.js";
 
 // Force Node to resolve DNS via Google/Cloudflare instead of your network's
 // default DNS server. Fixes "querySrv ETIMEOUT" on networks whose DNS doesn't
@@ -30,8 +28,6 @@ app.use(cors({
   credentials: true 
 }));
 app.use(express.json());
-app.use("/api/push", pushRoutes);
-startReminderScheduler();
 app.use("/api", apiRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/scores", scoreRoutes);
