@@ -9,7 +9,7 @@ export default function TermHeader({ path }) {
         <span className="dot r"></span>
         <span className="dot y"></span>
         <span className="dot g"></span>
-        <span className="term-title">placement-tracker {path}</span>
+        <span className="term-title">digs-space {path}</span>
       </div>
       <button className="theme-toggle" onClick={toggleTheme} type="button" aria-label="Toggle theme">
         {theme === "dark" ? "☀ Light" : "🌙 Dark"}

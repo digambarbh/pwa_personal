@@ -13,8 +13,8 @@ export default defineConfig({
   },
   includeAssets: ["favicon.ico", "apple-touch-icon.png"],
   manifest: {
-    name: "Placement Tracker",
-    short_name: "Tracker",
+    name: "Dig's Space",
+    short_name: "Dig's Space",
     description: "Track your placement prep — roadmap, companies, mock scores, and study time.",
     theme_color: "#1c2e22",
     background_color: "#1c2e22",
