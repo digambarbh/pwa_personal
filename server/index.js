@@ -7,6 +7,7 @@ import apiRoutes from "./routes/api.js";
 import companyRoutes from "./routes/companies.js";
 import scoreRoutes from "./routes/scores.js";
 import studyRoutes from "./routes/study.js";
+import noteRoutes from "./routes/notes.js";
 
 // Force Node to resolve DNS via Google/Cloudflare instead of your network's
 // default DNS server. Fixes "querySrv ETIMEOUT" on networks whose DNS doesn't
@@ -32,6 +33,7 @@ app.use("/api", apiRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/scores", scoreRoutes);
 app.use("/api/study", studyRoutes);
+app.use("/api/notes", noteRoutes);
 
 app.get("/", (req, res) => res.send("Placement Tracker API is running."));
 

@@ -8,6 +8,7 @@ import Companies from "./pages/Companies";
 import Scores from "./pages/Scores";
 import Timer from "./pages/Timer";
 import Settings from "./pages/Settings";
+import Learning from "./pages/Learning";
 import { TrackerProvider } from "./TrackerContext";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/companies" element={<Companies />} />
         <Route path="/scores" element={<Scores />} />
         <Route path="/timer" element={<Timer />} />
+        <Route path="/learning" element={<Learning />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
       <BottomNav />

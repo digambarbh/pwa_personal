@@ -31,4 +31,9 @@ export const api = {
   getStudySessions: () => request("/study"),
   logStudySession: (data) => request("/study", { method: "POST", body: JSON.stringify(data) }),
   getStudySummary: () => request("/study/summary"),
+  getNotes: () => request("/notes"),
+  getNote: (id) => request(`/notes/${id}`),
+  createNote: (data) => request("/notes", { method: "POST", body: JSON.stringify(data) }),
+  updateNote: (id, data) => request(`/notes/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteNote: (id) => request(`/notes/${id}`, { method: "DELETE" }),
 };
