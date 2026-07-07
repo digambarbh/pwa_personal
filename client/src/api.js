@@ -36,4 +36,8 @@ export const api = {
   createNote: (data) => request("/notes", { method: "POST", body: JSON.stringify(data) }),
   updateNote: (id, data) => request(`/notes/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteNote: (id) => request(`/notes/${id}`, { method: "DELETE" }),
+  getMetricToday: (date) => request(`/metrics/today?date=${date || ""}`),
+  updateMetricToday: (date, points) => request("/metrics/today", { method: "POST", body: JSON.stringify({ date, points }) }),
+  getSetting: (key) => request(`/settings/${key}`),
+  updateSetting: (key, value) => request("/settings", { method: "POST", body: JSON.stringify({ key, value }) }),
 };
