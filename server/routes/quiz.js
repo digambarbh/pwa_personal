@@ -24,7 +24,7 @@ router.post("/generate", async (req, res) => {
     prompt += `Generate exactly ${qCount} questions. Return ONLY a JSON array of objects, where each object has 'question' (string), 'options' (array of 4 strings), and 'answer' (the exact string of the correct option).`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
