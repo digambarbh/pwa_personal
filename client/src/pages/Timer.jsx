@@ -17,13 +17,18 @@ function formatTime(totalSeconds) {
 }
 
 export default function Timer() {
+  const [mode, setMode] = useState("focus"); // "focus" | "break"
   const [durationMin, setDurationMin] = useState(25);
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [running, setRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [endTime, setEndTime] = useState(null);
+  
   const [summary, setSummary] = useState(null);
   const [error, setError] = useState(null);
   const [justLogged, setJustLogged] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+  
   const intervalRef = useRef(null);
 
   const loadSummary = async () => {
@@ -37,31 +42,42 @@ export default function Timer() {
 
   useEffect(() => { loadSummary(); }, []);
 
+  const playChime = () => {
+    if (isMuted) return;
+    const audio = new Audio("https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg");
+    audio.play().catch(() => {});
+  };
+
   useEffect(() => {
-    if (running) {
+    if (running && endTime) {
       intervalRef.current = setInterval(() => {
-        setSecondsLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(intervalRef.current);
-            setRunning(false);
-            handleComplete(durationMin);
-            return 0;
-          }
-          return prev - 1;
-        });
-        setElapsedSeconds((prev) => prev + 1);
-      }, 1000);
+        const now = Date.now();
+        const left = Math.max(0, Math.round((endTime - now) / 1000));
+        setSecondsLeft(left);
+        setElapsedSeconds(durationMin * 60 - left);
+        
+        if (left <= 0) {
+          clearInterval(intervalRef.current);
+          setRunning(false);
+          playChime();
+          handleComplete(durationMin);
+        }
+      }, 500);
     } else {
       clearInterval(intervalRef.current);
     }
     return () => clearInterval(intervalRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running]);
+  }, [running, endTime, durationMin, isMuted]);
 
   const handleComplete = async (minutesToLog) => {
+    if (mode === "break") {
+      setJustLogged("Break completed!");
+      return;
+    }
     try {
       await api.logStudySession({ date: todayStr(), minutes: minutesToLog });
-      setJustLogged(minutesToLog);
+      setJustLogged(`✓ logged ${minutesToLog} min to your study time`);
       loadSummary();
     } catch (e) {
       setError(e.message);
@@ -78,16 +94,23 @@ export default function Timer() {
 
   const handleStart = () => {
     setJustLogged(null);
+    setEndTime(Date.now() + secondsLeft * 1000);
     setRunning(true);
   };
 
-  const handlePause = () => setRunning(false);
+  const handlePause = () => {
+    setRunning(false);
+    setEndTime(null);
+  };
 
   const handleStopAndLog = async () => {
     setRunning(false);
+    setEndTime(null);
     const minutesElapsed = Math.max(1, Math.round(elapsedSeconds / 60));
-    if (elapsedSeconds >= 60) {
+    if (elapsedSeconds >= 60 && mode === "focus") {
       await handleComplete(minutesElapsed);
+    } else if (mode === "break") {
+      setJustLogged("Break stopped early.");
     }
     setSecondsLeft(durationMin * 60);
     setElapsedSeconds(0);
@@ -109,9 +132,16 @@ export default function Timer() {
       <TermHeader path="--timer" />
       <Link to="/" className="back-link">‹ dashboard</Link>
 
-      <div className="card" style={{ textAlign: "center" }}>
-        <h1>Focus Timer</h1>
-        <div className="sub">pick a duration, hit start, just study</div>
+      <div className="card" style={{ textAlign: "center", position: "relative" }}>
+        <button 
+          onClick={() => setIsMuted(!isMuted)} 
+          style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: isMuted ? "var(--dim)" : "var(--text)", cursor: "pointer", fontSize: 18 }}
+        >
+          {isMuted ? "🔇" : "🔊"}
+        </button>
+        
+        <h1>{mode === "focus" ? "Focus Timer" : "Break Timer"}</h1>
+        <div className="sub">{mode === "focus" ? "pick a duration, hit start, just study" : "relax and recharge"}</div>
         {error && <div className="error-banner">{error}</div>}
 
         <div style={{ display: "flex", justifyContent: "center", margin: "10px 0 20px" }}>
@@ -131,13 +161,18 @@ export default function Timer() {
               {formatTime(secondsLeft)}
             </text>
             <text x="110" y="128" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="12" fill="#7d8590">
-              {running ? "focusing…" : secondsLeft === 0 ? "session complete" : "ready"}
+              {running ? (mode === "focus" ? "focusing…" : "on break…") : secondsLeft === 0 ? "session complete" : "ready"}
             </text>
           </svg>
         </div>
 
-        <div className="status-row" style={{ justifyContent: "center", marginBottom: 16 }}>
-          {PRESETS.map((p) => (
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 16 }}>
+          <button className={"status-pill" + (mode === "focus" ? " active" : "")} onClick={() => { setMode("focus"); selectPreset(25); }} disabled={running}>Focus</button>
+          <button className={"status-pill" + (mode === "break" ? " active" : "")} onClick={() => { setMode("break"); selectPreset(5); }} disabled={running}>Break</button>
+        </div>
+
+        <div className="status-row" style={{ justifyContent: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+          {(mode === "focus" ? PRESETS : [5, 10, 15]).map((p) => (
             <button
               key={p}
               className={"status-pill" + (durationMin === p ? " active" : "")}
@@ -147,6 +182,19 @@ export default function Timer() {
               {p} min
             </button>
           ))}
+          <input
+            type="number"
+            placeholder="Custom"
+            disabled={running}
+            className="form-input"
+            style={{ width: 80, textAlign: "center", padding: "4px", fontSize: 13, height: 28 }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const val = Number(e.target.value);
+                if (!isNaN(val) && val > 0) selectPreset(val);
+              }
+            }}
+          />
         </div>
 
         {!running && secondsLeft > 0 && elapsedSeconds === 0 && (
@@ -167,7 +215,7 @@ export default function Timer() {
 
         {justLogged && (
           <div className="progress-label" style={{ marginTop: 12, color: "#39d353" }}>
-            ✓ logged {justLogged} min to your study time
+            {justLogged}
           </div>
         )}
       </div>
