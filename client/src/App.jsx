@@ -28,19 +28,6 @@ function AppContent() {
   if (hideMode) {
     return (
       <>
-        <button 
-          onClick={toggleHideMode} 
-          style={{ 
-            position: "fixed", bottom: 80, right: 20, zIndex: 9999, 
-            padding: "10px 20px", borderRadius: "20px", 
-            background: "var(--surface2)", color: "var(--text)", 
-            border: "1px solid var(--border)", cursor: "pointer", 
-            boxShadow: "0 4px 10px rgba(0,0,0,0.5)",
-            fontFamily: "var(--mono)", fontSize: "14px"
-          }}
-        >
-          👁 unhide
-        </button>
         <Routes>
           <Route path="*" element={<Timer />} />
           <Route path="/timer" element={<Timer />} />
@@ -62,18 +49,6 @@ function AppContent() {
 
   return (
     <>
-      <button 
-        onClick={toggleHideMode} 
-        style={{ 
-          position: "fixed", top: 16, right: 80, zIndex: 9999, 
-          padding: "4px 8px", borderRadius: "4px", 
-          background: "transparent", color: "var(--dim)", 
-          border: "1px solid var(--dim)", cursor: "pointer", 
-          fontFamily: "var(--mono)", fontSize: "11px" 
-        }}
-      >
-        🙈 hide
-      </button>
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/roadmap" element={<Roadmap />} />

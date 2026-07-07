@@ -1,7 +1,7 @@
 import { useTracker } from "../TrackerContext";
 
 export default function TermHeader({ path }) {
-  const { theme, toggleTheme } = useTracker();
+  const { theme, toggleTheme, toggleHideMode } = useTracker();
 
   return (
     <div className="term-header">
@@ -9,7 +9,13 @@ export default function TermHeader({ path }) {
         <span className="dot r"></span>
         <span className="dot y"></span>
         <span className="dot g"></span>
-        <span className="term-title">digs-space {path}</span>
+        <span 
+          className="term-title" 
+          onClick={toggleHideMode} 
+          style={{ cursor: "default", userSelect: "none" }}
+        >
+          digs-space {path}
+        </span>
       </div>
       <button className="theme-toggle" onClick={toggleTheme} type="button" aria-label="Toggle theme">
         {theme === "dark" ? "☀ Light" : "🌙 Dark"}
