@@ -375,14 +375,14 @@ h2 { font-family: var(--mono); font-size: 15px; margin: 0 0 10px; color: var(--t
 
 /* ---------- Skeleton Loader ---------- */
 @keyframes shimmer {
-  0% { background-position: -200vw 0; }
-  100% { background-position: 200vw 0; }
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg, var(--surface2) 0px, var(--border) 40px, var(--surface2) 80px);
-  background-size: 600px 100%;
-  animation: shimmer 1.5s infinite linear;
+  background: linear-gradient(to right, var(--surface2) 8%, var(--border) 18%, var(--surface2) 33%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
   border-radius: 4px;
 }
 
