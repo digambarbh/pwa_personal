@@ -37,6 +37,7 @@ export function TrackerProvider({ children }) {
   const [dailyMetric, setDailyMetric] = useState({ points: 0 });
   const [dailyTargetTime, setDailyTargetTime] = useState(0);
   const [hideMode, setHideMode] = useState(false);
+  const [unackReport, setUnackReport] = useState(null);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("theme");
@@ -57,16 +58,20 @@ export function TrackerProvider({ children }) {
   const loadAll = useCallback(async () => {
     try {
       setError(null);
-      const [t, s, metric, targetTimeSetting] = await Promise.all([
+      const [t, s, metric, targetTimeSetting, reportRes] = await Promise.all([
         api.getTasks(), 
         api.getStreak(),
         api.getMetricToday(todayStr()),
-        api.getSetting("dailyTargetTime")
+        api.getSetting("dailyTargetTime"),
+        api.checkReport().catch(() => ({ shouldShow: false }))
       ]);
       setTasks(t);
       setStreak(s);
       setDailyMetric(metric);
       setDailyTargetTime(targetTimeSetting.value || 120); // Default to 120 mins
+      if (reportRes && reportRes.shouldShow) {
+        setUnackReport(reportRes.report);
+      }
     } catch (e) {
       setError(e.message || "Failed to reach the server. Is the backend running?");
     } finally {
@@ -178,6 +183,15 @@ export function TrackerProvider({ children }) {
     }
   }, []);
 
+  const acknowledgeReport = useCallback(async (reportId) => {
+    try {
+      await api.ackReport(reportId);
+      setUnackReport(null);
+    } catch (e) {
+      setError("Failed to acknowledge report");
+    }
+  }, []);
+
   const value = {
     tasks,
     taskMap,
@@ -205,6 +219,8 @@ export function TrackerProvider({ children }) {
     updateDailyTargetTime,
     hideMode,
     toggleHideMode: () => setHideMode(prev => !prev),
+    unackReport,
+    acknowledgeReport,
   };
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>;

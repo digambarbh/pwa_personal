@@ -11,6 +11,7 @@ import Timer from "./pages/Timer";
 import Settings from "./pages/Settings";
 import Learning from "./pages/Learning";
 import { TrackerProvider, useTracker } from "./TrackerContext";
+import RealityCheckModal from "./components/RealityCheckModal";
 
 function AppContent() {
   const { hideMode, toggleHideMode } = useTracker();
@@ -49,6 +50,7 @@ function AppContent() {
 
   return (
     <>
+      <RealityCheckModal />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/roadmap" element={<Roadmap />} />
