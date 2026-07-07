@@ -9,9 +9,9 @@ export default defineConfig({
   registerType: "autoUpdate",
   devOptions: { enabled: true, type: "module" },
   injectManifest: {
-    globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+    globPatterns: ["**/*.{js,css,html,ico,png,svg,jpeg,jpg}"],
   },
-  includeAssets: ["favicon.ico", "apple-touch-icon.png"],
+  includeAssets: ["favicon.ico", "logo.jpeg"],
   manifest: {
     name: "Dig's Space",
     short_name: "Dig's Space",
@@ -22,9 +22,9 @@ export default defineConfig({
     orientation: "portrait",
     start_url: "/",
     icons: [
-      { src: "/pwa-192.png", sizes: "192x192", type: "image/png" },
-      { src: "/pwa-512.png", sizes: "512x512", type: "image/png" },
-      { src: "/pwa-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/logo.jpeg", sizes: "192x192", type: "image/jpeg" },
+      { src: "/logo.jpeg", sizes: "512x512", type: "image/jpeg" },
+      { src: "/logo.jpeg", sizes: "512x512", type: "image/jpeg", purpose: "maskable" },
     ],
   },
 })],
