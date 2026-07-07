@@ -62,7 +62,7 @@ router.post("/reset", async (req, res) => {
 router.get("/metrics/today", async (req, res) => {
   const date = req.query.date || todayStr();
   const metric = await DailyMetric.findOne({ date });
-  res.json(metric || { date, points: 0 });
+  res.json(metric || { date, points: 0, logs: [] });
 });
 
 router.post("/metrics/today", async (req, res) => {
@@ -71,6 +71,25 @@ router.post("/metrics/today", async (req, res) => {
   const metric = await DailyMetric.findOneAndUpdate(
     { date: targetDate },
     { $set: { points } },
+    { new: true, upsert: true }
+  );
+  res.json(metric);
+});
+
+router.post("/metrics/today/log", async (req, res) => {
+  const { date, label, points } = req.body;
+  const targetDate = date || todayStr();
+  
+  if (!label || !points) {
+    return res.status(400).json({ error: "Label and points are required" });
+  }
+
+  const metric = await DailyMetric.findOneAndUpdate(
+    { date: targetDate },
+    { 
+      $push: { logs: { label, points: Number(points) } },
+      $inc: { points: Number(points) }
+    },
     { new: true, upsert: true }
   );
   res.json(metric);

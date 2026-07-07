@@ -26,6 +26,7 @@ export default function Dashboard() {
     dailyMetric,
     dailyTargetTime,
     updateDailyPoints,
+    addDailyMetricLog,
     updateDailyTargetTime,
   } = useTracker();
 
@@ -34,6 +35,7 @@ export default function Dashboard() {
   
   const [modalState, setModalState] = useState({ type: null });
   const [tempVal, setTempVal] = useState("");
+  const [tempLabel, setTempLabel] = useState("");
 
   useEffect(() => {
     fetch("https://dummyjson.com/quotes/random")
@@ -136,11 +138,12 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="stat" onClick={() => {
-            setTempVal(String(dailyMetric?.points || 0));
+            setTempVal("");
+            setTempLabel("");
             setModalState({ type: "points" });
           }} style={{ cursor: "pointer" }}>
             <div className="n">{dailyMetric?.points || 0}</div>
-            <div className="l">points today (click to update)</div>
+            <div className="l">points today (click to add)</div>
           </div>
         </div>
 
@@ -187,27 +190,58 @@ export default function Dashboard() {
         <div className="modal-overlay" onClick={() => setModalState({ type: null })}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-title">
-              {modalState.type === "target" ? "Set Daily Study Target" : "Set Extra Points"}
+              {modalState.type === "target" ? "Set Daily Study Target" : "Add Extra Points"}
             </div>
             <div className="modal-desc">
               {modalState.type === "target" 
                 ? "How many minutes do you want to target each day?" 
-                : "How many extra points did you study today?"}
+                : "What did you study and how many extra points is it worth?"}
             </div>
+            
+            {modalState.type === "points" && (
+              <div style={{ marginBottom: 16 }}>
+                {dailyMetric?.logs?.length > 0 && (
+                  <div style={{ marginBottom: 12, background: "var(--surface2)", padding: 8, borderRadius: 6 }}>
+                    <div style={{ fontSize: 11, color: "var(--dim)", textTransform: "uppercase", marginBottom: 6 }}>Today's Logs</div>
+                    {dailyMetric.logs.map((log, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 4 }}>
+                        <span>{log.label}</span>
+                        <span style={{ color: "var(--amber)", fontFamily: "var(--mono)" }}>+{log.points}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  placeholder="Topic (e.g. Advanced Trees)" 
+                  value={tempLabel} 
+                  onChange={e => setTempLabel(e.target.value)} 
+                  autoFocus
+                  style={{ marginBottom: 8 }}
+                />
+              </div>
+            )}
+
             <input 
               type="number" 
               className="form-input" 
+              placeholder={modalState.type === "points" ? "Points" : ""}
               value={tempVal} 
               onChange={e => setTempVal(e.target.value)} 
-              autoFocus
+              autoFocus={modalState.type !== "points"}
               onKeyDown={e => {
                 if (e.key === "Enter") {
                   const val = Number(tempVal);
                   if (!isNaN(val)) {
-                    if (modalState.type === "target") updateDailyTargetTime(val);
-                    else if (modalState.type === "points") updateDailyPoints(val);
+                    if (modalState.type === "target") {
+                      updateDailyTargetTime(val);
+                      setModalState({ type: null });
+                    } else if (modalState.type === "points" && tempLabel) {
+                      addDailyMetricLog(tempLabel, val);
+                      setModalState({ type: null });
+                    }
                   }
-                  setModalState({ type: null });
                 }
               }}
             />
@@ -216,10 +250,14 @@ export default function Dashboard() {
               <button className="modal-btn primary" onClick={() => {
                 const val = Number(tempVal);
                 if (!isNaN(val)) {
-                  if (modalState.type === "target") updateDailyTargetTime(val);
-                  else if (modalState.type === "points") updateDailyPoints(val);
+                  if (modalState.type === "target") {
+                    updateDailyTargetTime(val);
+                    setModalState({ type: null });
+                  } else if (modalState.type === "points" && tempLabel) {
+                    addDailyMetricLog(tempLabel, val);
+                    setModalState({ type: null });
+                  }
                 }
-                setModalState({ type: null });
               }}>Save</button>
             </div>
           </div>

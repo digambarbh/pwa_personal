@@ -134,6 +134,22 @@ export function TrackerProvider({ children }) {
     }
   }, []);
 
+  const addDailyMetricLog = useCallback(async (label, points) => {
+    try {
+      // optimistic
+      setDailyMetric((prev) => ({
+        ...prev,
+        points: (prev.points || 0) + points,
+        logs: [...(prev.logs || []), { label, points }]
+      }));
+      const updated = await api.addMetricLog(todayStr(), label, points);
+      setDailyMetric(updated);
+    } catch (e) {
+      setError(e.message);
+      loadAll();
+    }
+  }, [loadAll]);
+
   const updateDailyTargetTime = useCallback(async (mins) => {
     try {
       setDailyTargetTime(mins);
@@ -164,6 +180,7 @@ export function TrackerProvider({ children }) {
     dailyMetric,
     dailyTargetTime,
     updateDailyPoints,
+    addDailyMetricLog,
     updateDailyTargetTime,
   };
 
