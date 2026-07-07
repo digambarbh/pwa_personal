@@ -9,12 +9,7 @@ async function request(path, options = {}) {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    let errMsg = text;
-    try {
-      const parsed = JSON.parse(text);
-      if (parsed.error) errMsg = parsed.error;
-    } catch (e) {}
-    throw new Error(errMsg || `API ${path} failed: ${res.status}`);
+    throw new Error(`API ${path} failed: ${res.status} ${text}`);
   }
   return res.json();
 }
@@ -49,7 +44,4 @@ export const api = {
   deleteMetricLog: (date, logId) => request(`/metrics/log/${date}/${logId}`, { method: "DELETE" }),
   getSetting: (key) => request(`/settings/${key}`),
   updateSetting: (key, value) => request("/settings", { method: "POST", body: JSON.stringify({ key, value }) }),
-  generateQuiz: (data) => request("/quiz/generate", { method: "POST", body: JSON.stringify(data) }),
-  saveQuizScore: (data) => request("/quiz/results", { method: "POST", body: JSON.stringify(data) }),
-  getQuizScores: () => request("/quiz/results"),
 };

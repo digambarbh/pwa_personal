@@ -8,7 +8,6 @@ import companyRoutes from "./routes/companies.js";
 import scoreRoutes from "./routes/scores.js";
 import studyRoutes from "./routes/study.js";
 import noteRoutes from "./routes/notes.js";
-import quizRoutes from "./routes/quiz.js";
 
 // Force Node to resolve DNS via Google/Cloudflare instead of your network's
 // default DNS server. Fixes "querySrv ETIMEOUT" on networks whose DNS doesn't
@@ -35,7 +34,6 @@ app.use("/api/companies", companyRoutes);
 app.use("/api/scores", scoreRoutes);
 app.use("/api/study", studyRoutes);
 app.use("/api/notes", noteRoutes);
-app.use("/api/quiz", quizRoutes);
 
 import path from "path";
 import { fileURLToPath } from "url";
