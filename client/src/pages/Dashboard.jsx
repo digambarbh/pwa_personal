@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { useTracker } from "../TrackerContext";
 import { WEEK_DATA, PHASES } from "../data/weekData";
 import { getQuoteOfDay } from "../data/quotes";
@@ -65,7 +66,7 @@ export default function Dashboard() {
     });
   }, [tasks]);
 
-  if (loading) return <div className="loading">connecting to database…</div>;
+  if (loading) return <SkeletonLoader path="--status" />;
 
   let nextUp = null;
   outer: for (const phase of PHASES) {

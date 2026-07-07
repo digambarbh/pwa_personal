@@ -4,6 +4,7 @@ import {
   XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { useTracker } from "../TrackerContext";
 import { api } from "../api";
 import { PHASES } from "../data/weekData";
@@ -75,7 +76,7 @@ export default function Journey() {
       .map((s) => ({ date: s.date.slice(5), pct: Math.round((s.score / s.maxScore) * 100) }));
   }, [scores, scoreType]);
 
-  if (loading) return <div className="loading">loading journey…</div>;
+  if (loading) return <SkeletonLoader path="--journey" />;
 
   const set = new Set(streak);
   const heatDays = [];

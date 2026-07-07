@@ -1,5 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { useTracker } from "../TrackerContext";
 import { WEEK_DATA, PHASES } from "../data/weekData";
 
@@ -9,7 +10,7 @@ export default function PhaseDetail() {
   const phase = PHASES.find((p) => String(p.id) === phaseId);
 
   if (!phase) return <Navigate to="/roadmap" replace />;
-  if (loading) return <div className="loading">loading…</div>;
+  if (loading) return <SkeletonLoader path={`--phase-${phaseId}`} />;
 
   return (
     <div className="page">

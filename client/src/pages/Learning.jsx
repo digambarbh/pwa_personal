@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { api } from "../api";
 
 export default function Learning() {
@@ -103,7 +104,7 @@ export default function Learning() {
     setIsEditing(false);
   };
 
-  if (loading && notes.length === 0) return <div className="loading">LOADING NOTES...</div>;
+  if (loading && notes.length === 0) return <SkeletonLoader path="--learning" />;
 
   return (
     <div className="page">

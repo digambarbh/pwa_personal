@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { api } from "../api";
 
 const TYPES = ["aptitude", "dsa", "mock-interview", "gd"];
@@ -72,7 +73,7 @@ export default function Scores() {
     return Math.round(pct);
   };
 
-  if (loading) return <div className="loading">loading scores…</div>;
+  if (loading) return <SkeletonLoader path="--scores" />;
 
   return (
     <div className="page">

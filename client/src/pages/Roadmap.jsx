@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { useTracker } from "../TrackerContext";
 import { PHASES } from "../data/weekData";
 
 export default function Roadmap() {
-  const { loading, taskMap } = useTracker();
+  const { loading, error, taskMap, refresh } = useTracker();
 
-  if (loading) return <div className="loading">loading roadmap…</div>;
+  if (loading) return <SkeletonLoader path="--roadmap" />;
 
   return (
     <div className="page">

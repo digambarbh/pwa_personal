@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TermHeader from "../components/TermHeader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import { api } from "../api";
 
 const STATUSES = ["applied", "oa", "interview", "offer", "rejected"];
@@ -69,7 +70,7 @@ export default function Companies() {
     return acc;
   }, {});
 
-  if (loading) return <div className="loading">loading companies…</div>;
+  if (loading) return <SkeletonLoader path="--companies" />;
 
   return (
     <div className="page">
