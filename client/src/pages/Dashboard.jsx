@@ -31,6 +31,9 @@ export default function Dashboard() {
 
   const [studySummary, setStudySummary] = useState(null);
   const [quote, setQuote] = useState(getQuoteOfDay());
+  
+  const [modalState, setModalState] = useState({ type: null });
+  const [tempVal, setTempVal] = useState("");
 
   useEffect(() => {
     fetch("https://dummyjson.com/quotes/random")
@@ -123,8 +126,8 @@ export default function Dashboard() {
         <div className="section-title">Daily Goals</div>
         <div className="stats" style={{ marginBottom: 20 }}>
           <div className="stat" onClick={() => {
-            const val = prompt("Set Daily Study Time Target (minutes):", dailyTargetTime);
-            if (val && !isNaN(val)) updateDailyTargetTime(Number(val));
+            setTempVal(String(dailyTargetTime || 120));
+            setModalState({ type: "target" });
           }} style={{ cursor: "pointer", position: "relative" }}>
             <div className="n">{studySummary ? studySummary.todayMinutes : 0} <span style={{ fontSize: "0.6em", color: "var(--dim)" }}>/ {dailyTargetTime}m</span></div>
             <div className="l">time today (click to set target)</div>
@@ -133,8 +136,8 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="stat" onClick={() => {
-            const val = prompt("Set points studied today:", dailyMetric?.points || 0);
-            if (val && !isNaN(val)) updateDailyPoints(Number(val));
+            setTempVal(String(dailyMetric?.points || 0));
+            setModalState({ type: "points" });
           }} style={{ cursor: "pointer" }}>
             <div className="n">{dailyMetric?.points || 0}</div>
             <div className="l">points today (click to update)</div>
@@ -177,6 +180,49 @@ export default function Dashboard() {
       {!nextUp && total > 0 && (
         <div className="card plain">
           <div className="empty">All 20 weeks complete. You're placement-ready. 🎯</div>
+        </div>
+      )}
+
+      {modalState.type && (
+        <div className="modal-overlay" onClick={() => setModalState({ type: null })}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">
+              {modalState.type === "target" ? "Set Daily Study Target" : "Set Extra Points"}
+            </div>
+            <div className="modal-desc">
+              {modalState.type === "target" 
+                ? "How many minutes do you want to target each day?" 
+                : "How many extra points did you study today?"}
+            </div>
+            <input 
+              type="number" 
+              className="form-input" 
+              value={tempVal} 
+              onChange={e => setTempVal(e.target.value)} 
+              autoFocus
+              onKeyDown={e => {
+                if (e.key === "Enter") {
+                  const val = Number(tempVal);
+                  if (!isNaN(val)) {
+                    if (modalState.type === "target") updateDailyTargetTime(val);
+                    else if (modalState.type === "points") updateDailyPoints(val);
+                  }
+                  setModalState({ type: null });
+                }
+              }}
+            />
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={() => setModalState({ type: null })}>Cancel</button>
+              <button className="modal-btn primary" onClick={() => {
+                const val = Number(tempVal);
+                if (!isNaN(val)) {
+                  if (modalState.type === "target") updateDailyTargetTime(val);
+                  else if (modalState.type === "points") updateDailyPoints(val);
+                }
+                setModalState({ type: null });
+              }}>Save</button>
+            </div>
+          </div>
         </div>
       )}
     </div>
