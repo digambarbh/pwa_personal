@@ -28,15 +28,17 @@ export default function Journey() {
   const { loading, streak, currentStreak, checkedToday, checkinToday, todayStr, tasks } = useTracker();
   const [scores, setScores] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [metrics, setMetrics] = useState([]);
   const [scoreType, setScoreType] = useState("aptitude");
   const [error, setError] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [s, sess] = await Promise.all([api.getScores(), api.getStudySessions()]);
+        const [s, sess, m] = await Promise.all([api.getScores(), api.getStudySessions(), api.getMetrics()]);
         setScores(s);
         setSessions(sess);
+        setMetrics(m);
       } catch (e) {
         setError(e.message);
       }
@@ -124,6 +126,29 @@ export default function Journey() {
             <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+      <div className="card plain">
+        <h2>Extra Points History</h2>
+        {metrics.filter(m => m.logs && m.logs.length > 0).length === 0 ? (
+          <div className="empty">No extra points logged yet.</div>
+        ) : (
+          metrics.filter(m => m.logs && m.logs.length > 0).map(m => (
+            <div key={m.date} style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 11, color: "var(--dim)", fontFamily: "var(--mono)", marginBottom: 8, textTransform: "uppercase" }}>
+                {m.date === todayStr() ? "Today" : m.date} — {m.points} Total Points
+              </div>
+              <div style={{ background: "var(--surface2)", borderRadius: 6, padding: "4px 12px", border: "1px solid var(--border)" }}>
+                {m.logs.map((log, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: i < m.logs.length - 1 ? "1px solid var(--border)" : "none" }}>
+                    <span style={{ fontSize: 13.5 }}>{log.label}</span>
+                    <span style={{ fontSize: 13, color: "var(--amber)", fontFamily: "var(--mono)" }}>+{log.points} pts</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="card plain">

@@ -59,6 +59,11 @@ router.post("/reset", async (req, res) => {
   res.json({ ok: true });
 });
 
+router.get("/metrics", async (req, res) => {
+  const metrics = await DailyMetric.find().sort({ date: -1 }).lean();
+  res.json(metrics);
+});
+
 router.get("/metrics/today", async (req, res) => {
   const date = req.query.date || todayStr();
   const metric = await DailyMetric.findOne({ date });
