@@ -1,6 +1,8 @@
 import { Router } from "express";
 import Task from "../models/Task.js";
 import StreakDay from "../models/StreakDay.js";
+import DailyMetric from "../models/DailyMetric.js";
+import Settings from "../models/Settings.js";
 import { WEEK_DATA, PHASES } from "../weekData.js";
 
 const router = Router();
@@ -53,7 +55,40 @@ router.post("/streak/checkin", async (req, res) => {
 router.post("/reset", async (req, res) => {
   await Task.updateMany({}, { done: false, completedAt: null });
   await StreakDay.deleteMany({});
+  await DailyMetric.deleteMany({});
   res.json({ ok: true });
+});
+
+router.get("/metrics/today", async (req, res) => {
+  const date = req.query.date || todayStr();
+  const metric = await DailyMetric.findOne({ date });
+  res.json(metric || { date, points: 0 });
+});
+
+router.post("/metrics/today", async (req, res) => {
+  const { date, points } = req.body;
+  const targetDate = date || todayStr();
+  const metric = await DailyMetric.findOneAndUpdate(
+    { date: targetDate },
+    { $set: { points } },
+    { new: true, upsert: true }
+  );
+  res.json(metric);
+});
+
+router.get("/settings/:key", async (req, res) => {
+  const setting = await Settings.findOne({ key: req.params.key });
+  res.json(setting || { key: req.params.key, value: null });
+});
+
+router.post("/settings", async (req, res) => {
+  const { key, value } = req.body;
+  const setting = await Settings.findOneAndUpdate(
+    { key },
+    { $set: { value } },
+    { new: true, upsert: true }
+  );
+  res.json(setting);
 });
 
 export default router;

@@ -23,6 +23,10 @@ export default function Dashboard() {
     checkinToday,
     taskMap,
     tasks,
+    dailyMetric,
+    dailyTargetTime,
+    updateDailyPoints,
+    updateDailyTargetTime,
   } = useTracker();
 
   const [studySummary, setStudySummary] = useState(null);
@@ -115,6 +119,27 @@ export default function Dashboard() {
             <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+
+        <div className="section-title">Daily Goals</div>
+        <div className="stats" style={{ marginBottom: 20 }}>
+          <div className="stat" onClick={() => {
+            const val = prompt("Set Daily Study Time Target (minutes):", dailyTargetTime);
+            if (val && !isNaN(val)) updateDailyTargetTime(Number(val));
+          }} style={{ cursor: "pointer", position: "relative" }}>
+            <div className="n">{studySummary ? studySummary.todayMinutes : 0} <span style={{ fontSize: "0.6em", color: "var(--dim)" }}>/ {dailyTargetTime}m</span></div>
+            <div className="l">time today (click to set target)</div>
+            <div className="bar" style={{ height: 4, marginTop: 8, background: "var(--border)" }}>
+              <div className="bar-fill" style={{ width: `${Math.min(100, ((studySummary?.todayMinutes || 0) / (dailyTargetTime || 1)) * 100)}%`, background: CHART_GREEN, height: "100%" }} />
+            </div>
+          </div>
+          <div className="stat" onClick={() => {
+            const val = prompt("Set points studied today:", dailyMetric?.points || 0);
+            if (val && !isNaN(val)) updateDailyPoints(Number(val));
+          }} style={{ cursor: "pointer" }}>
+            <div className="n">{dailyMetric?.points || 0}</div>
+            <div className="l">points today (click to update)</div>
+          </div>
+        </div>
 
         <div className="section-title">Daily check-in</div>
         <button

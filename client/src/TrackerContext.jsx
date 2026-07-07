@@ -34,6 +34,8 @@ export function TrackerProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [theme, setTheme] = useState("dark");
+  const [dailyMetric, setDailyMetric] = useState({ points: 0 });
+  const [dailyTargetTime, setDailyTargetTime] = useState(0);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("theme");
@@ -54,9 +56,16 @@ export function TrackerProvider({ children }) {
   const loadAll = useCallback(async () => {
     try {
       setError(null);
-      const [t, s] = await Promise.all([api.getTasks(), api.getStreak()]);
+      const [t, s, metric, targetTimeSetting] = await Promise.all([
+        api.getTasks(), 
+        api.getStreak(),
+        api.getMetricToday(todayStr()),
+        api.getSetting("dailyTargetTime")
+      ]);
       setTasks(t);
       setStreak(s);
+      setDailyMetric(metric);
+      setDailyTargetTime(targetTimeSetting.value || 120); // Default to 120 mins
     } catch (e) {
       setError(e.message || "Failed to reach the server. Is the backend running?");
     } finally {
@@ -115,6 +124,25 @@ export function TrackerProvider({ children }) {
   const currentStreak = computeStreak(streak);
   const checkedToday = streak.includes(todayStr());
 
+  const updateDailyPoints = useCallback(async (points) => {
+    try {
+      setDailyMetric((prev) => ({ ...prev, points }));
+      const updated = await api.updateMetricToday(todayStr(), points);
+      setDailyMetric(updated);
+    } catch (e) {
+      setError(e.message);
+    }
+  }, []);
+
+  const updateDailyTargetTime = useCallback(async (mins) => {
+    try {
+      setDailyTargetTime(mins);
+      await api.updateSetting("dailyTargetTime", mins);
+    } catch (e) {
+      setError(e.message);
+    }
+  }, []);
+
   const value = {
     tasks,
     taskMap,
@@ -133,6 +161,10 @@ export function TrackerProvider({ children }) {
     todayStr,
     theme,
     toggleTheme,
+    dailyMetric,
+    dailyTargetTime,
+    updateDailyPoints,
+    updateDailyTargetTime,
   };
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>;
