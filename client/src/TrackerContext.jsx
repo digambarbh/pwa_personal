@@ -36,6 +36,7 @@ export function TrackerProvider({ children }) {
   const [theme, setTheme] = useState("dark");
   const [dailyMetric, setDailyMetric] = useState({ points: 0 });
   const [dailyTargetTime, setDailyTargetTime] = useState(0);
+  const [hideMode, setHideMode] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("theme");
@@ -202,6 +203,8 @@ export function TrackerProvider({ children }) {
     updateDailyMetricLog,
     deleteDailyMetricLog,
     updateDailyTargetTime,
+    hideMode,
+    toggleHideMode: () => setHideMode(prev => !prev),
   };
 
   return <TrackerContext.Provider value={value}>{children}</TrackerContext.Provider>;
