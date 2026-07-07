@@ -150,6 +150,24 @@ export function TrackerProvider({ children }) {
     }
   }, [loadAll]);
 
+  const updateDailyMetricLog = useCallback(async (logId, label, points) => {
+    try {
+      const updated = await api.updateMetricLog(todayStr(), logId, label, points);
+      setDailyMetric(updated);
+    } catch (e) {
+      setError(e.message);
+    }
+  }, []);
+
+  const deleteDailyMetricLog = useCallback(async (logId) => {
+    try {
+      const updated = await api.deleteMetricLog(todayStr(), logId);
+      setDailyMetric(updated);
+    } catch (e) {
+      setError(e.message);
+    }
+  }, []);
+
   const updateDailyTargetTime = useCallback(async (mins) => {
     try {
       setDailyTargetTime(mins);
@@ -181,6 +199,8 @@ export function TrackerProvider({ children }) {
     dailyTargetTime,
     updateDailyPoints,
     addDailyMetricLog,
+    updateDailyMetricLog,
+    deleteDailyMetricLog,
     updateDailyTargetTime,
   };
 

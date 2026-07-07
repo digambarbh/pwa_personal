@@ -27,6 +27,8 @@ export default function Dashboard() {
     dailyTargetTime,
     updateDailyPoints,
     addDailyMetricLog,
+    updateDailyMetricLog,
+    deleteDailyMetricLog,
     updateDailyTargetTime,
   } = useTracker();
 
@@ -36,6 +38,7 @@ export default function Dashboard() {
   const [modalState, setModalState] = useState({ type: null });
   const [tempVal, setTempVal] = useState("");
   const [tempLabel, setTempLabel] = useState("");
+  const [editingLogId, setEditingLogId] = useState(null);
 
   useEffect(() => {
     fetch("https://dummyjson.com/quotes/random")
@@ -140,6 +143,7 @@ export default function Dashboard() {
           <div className="stat" onClick={() => {
             setTempVal("");
             setTempLabel("");
+            setEditingLogId(null);
             setModalState({ type: "points" });
           }} style={{ cursor: "pointer" }}>
             <div className="n">{dailyMetric?.points || 0}</div>
@@ -187,7 +191,7 @@ export default function Dashboard() {
       )}
 
       {modalState.type && (
-        <div className="modal-overlay" onClick={() => setModalState({ type: null })}>
+        <div className="modal-overlay" onClick={() => { setModalState({ type: null }); setEditingLogId(null); }}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-title">
               {modalState.type === "target" ? "Set Daily Study Target" : "Add Extra Points"}
@@ -204,9 +208,26 @@ export default function Dashboard() {
                   <div style={{ marginBottom: 12, background: "var(--surface2)", padding: 8, borderRadius: 6 }}>
                     <div style={{ fontSize: 11, color: "var(--dim)", textTransform: "uppercase", marginBottom: 6 }}>Today's Logs</div>
                     {dailyMetric.logs.map((log, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 4 }}>
-                        <span>{log.label}</span>
-                        <span style={{ color: "var(--amber)", fontFamily: "var(--mono)" }}>+{log.points}</span>
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13, marginBottom: 4 }}>
+                        <div style={{ flex: 1 }}>
+                          <span>{log.label}</span>
+                          <span style={{ color: "var(--amber)", fontFamily: "var(--mono)", marginLeft: 8 }}>+{log.points}</span>
+                        </div>
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <span style={{ cursor: "pointer", color: "var(--dim)" }} onClick={() => {
+                            setEditingLogId(log._id);
+                            setTempLabel(log.label);
+                            setTempVal(String(log.points));
+                          }}>✎</span>
+                          <span style={{ cursor: "pointer", color: "var(--dim)" }} onClick={() => {
+                            deleteDailyMetricLog(log._id);
+                            if (editingLogId === log._id) {
+                              setEditingLogId(null);
+                              setTempLabel("");
+                              setTempVal("");
+                            }
+                          }}>🗑️</span>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -237,28 +258,40 @@ export default function Dashboard() {
                     if (modalState.type === "target") {
                       updateDailyTargetTime(val);
                       setModalState({ type: null });
+                      setEditingLogId(null);
                     } else if (modalState.type === "points" && tempLabel) {
-                      addDailyMetricLog(tempLabel, val);
-                      setModalState({ type: null });
+                      if (editingLogId) updateDailyMetricLog(editingLogId, tempLabel, val);
+                      else addDailyMetricLog(tempLabel, val);
+                      
+                      setTempLabel("");
+                      setTempVal("");
+                      setEditingLogId(null);
+                      // keep modal open so they can add more if they want, or close it:
+                      // setModalState({ type: null }); 
                     }
                   }
                 }
               }}
             />
             <div className="modal-actions">
-              <button className="modal-btn cancel" onClick={() => setModalState({ type: null })}>Cancel</button>
+              <button className="modal-btn cancel" onClick={() => { setModalState({ type: null }); setEditingLogId(null); }}>Close</button>
               <button className="modal-btn primary" onClick={() => {
                 const val = Number(tempVal);
                 if (!isNaN(val)) {
                   if (modalState.type === "target") {
                     updateDailyTargetTime(val);
                     setModalState({ type: null });
+                    setEditingLogId(null);
                   } else if (modalState.type === "points" && tempLabel) {
-                    addDailyMetricLog(tempLabel, val);
-                    setModalState({ type: null });
+                    if (editingLogId) updateDailyMetricLog(editingLogId, tempLabel, val);
+                    else addDailyMetricLog(tempLabel, val);
+                    
+                    setTempLabel("");
+                    setTempVal("");
+                    setEditingLogId(null);
                   }
                 }
-              }}>Save</button>
+              }}>{editingLogId ? "Update" : "Save"}</button>
             </div>
           </div>
         </div>

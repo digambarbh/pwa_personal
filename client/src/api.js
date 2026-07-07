@@ -40,6 +40,8 @@ export const api = {
   getMetrics: () => request("/metrics"),
   updateMetricToday: (date, points) => request("/metrics/today", { method: "POST", body: JSON.stringify({ date, points }) }),
   addMetricLog: (date, label, points) => request("/metrics/today/log", { method: "POST", body: JSON.stringify({ date, label, points }) }),
+  updateMetricLog: (date, logId, label, points) => request(`/metrics/log/${date}/${logId}`, { method: "PUT", body: JSON.stringify({ label, points }) }),
+  deleteMetricLog: (date, logId) => request(`/metrics/log/${date}/${logId}`, { method: "DELETE" }),
   getSetting: (key) => request(`/settings/${key}`),
   updateSetting: (key, value) => request("/settings", { method: "POST", body: JSON.stringify({ key, value }) }),
 };

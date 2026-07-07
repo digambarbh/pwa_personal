@@ -100,6 +100,43 @@ router.post("/metrics/today/log", async (req, res) => {
   res.json(metric);
 });
 
+router.put("/metrics/log/:date/:logId", async (req, res) => {
+  const { date, logId } = req.params;
+  const { label, points } = req.body;
+  
+  const metric = await DailyMetric.findOne({ date });
+  if (!metric) return res.status(404).json({ error: "Metric not found" });
+  
+  const log = metric.logs.id(logId);
+  if (!log) return res.status(404).json({ error: "Log not found" });
+  
+  // Update total points
+  metric.points = metric.points - log.points + Number(points);
+  
+  // Update log
+  log.label = label;
+  log.points = Number(points);
+  
+  await metric.save();
+  res.json(metric);
+});
+
+router.delete("/metrics/log/:date/:logId", async (req, res) => {
+  const { date, logId } = req.params;
+  
+  const metric = await DailyMetric.findOne({ date });
+  if (!metric) return res.status(404).json({ error: "Metric not found" });
+  
+  const log = metric.logs.id(logId);
+  if (!log) return res.status(404).json({ error: "Log not found" });
+  
+  metric.points -= log.points;
+  log.deleteOne();
+  
+  await metric.save();
+  res.json(metric);
+});
+
 router.get("/settings/:key", async (req, res) => {
   const setting = await Settings.findOne({ key: req.params.key });
   res.json(setting || { key: req.params.key, value: null });
