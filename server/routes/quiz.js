@@ -24,7 +24,7 @@ router.post("/generate", async (req, res) => {
     prompt += `Generate exactly ${qCount} questions. Return ONLY a JSON array of objects, where each object has 'question' (string), 'options' (array of 4 strings), and 'answer' (the exact string of the correct option).`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -35,7 +35,7 @@ router.post("/generate", async (req, res) => {
     res.json(quizData);
   } catch (error) {
     console.error("Quiz generation error:", error);
-    res.status(500).json({ error: "Failed to generate quiz. Please try again." });
+    res.status(500).json({ error: error.message || "Failed to generate quiz. Please try again." });
   }
 });
 
