@@ -9,7 +9,12 @@ async function request(path, options = {}) {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`API ${path} failed: ${res.status} ${text}`);
+    let errMsg = text;
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed.error) errMsg = parsed.error;
+    } catch (e) {}
+    throw new Error(errMsg || `API ${path} failed: ${res.status}`);
   }
   return res.json();
 }

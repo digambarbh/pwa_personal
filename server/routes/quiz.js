@@ -35,6 +35,9 @@ router.post("/generate", async (req, res) => {
     res.json(quizData);
   } catch (error) {
     console.error("Quiz generation error:", error);
+    if (error.message && error.message.includes("429")) {
+      return res.status(429).json({ error: "Gemini API rate limit exceeded. Please wait about 1 minute and try again." });
+    }
     res.status(500).json({ error: error.message || "Failed to generate quiz. Please try again." });
   }
 });
