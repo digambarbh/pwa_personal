@@ -1,9 +1,7 @@
 import { Router } from "express";
-import { GoogleGenAI } from "@google/genai";
 import QuizResult from "../models/QuizResult.js";
 
 const router = Router();
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 function todayStr() {
   const d = new Date();
@@ -21,22 +19,43 @@ router.post("/generate", async (req, res) => {
     if (content) {
       prompt += `Base the questions strictly on this content:\n${content}\n\n`;
     }
-    prompt += `Generate exactly ${qCount} questions. Return ONLY a JSON array of objects, where each object has 'question' (string), 'options' (array of 4 strings), and 'answer' (the exact string of the correct option).`;
+    prompt += `Generate exactly ${qCount} questions. Return ONLY a JSON array of objects, where each object has 'question' (string), 'options' (array of 4 strings), and 'answer' (the exact string of the correct option). Do not include any markdown formatting or \`\`\`json tags, just the raw JSON array.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
+    const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.CLIENT_ORIGIN || "http://localhost:5173",
+        "X-Title": "Placement Tracker"
       },
+      body: JSON.stringify({
+        model: process.env.OPENROUTER_MODEL || "google/gemini-2.0-flash-lite-preview-02-05:free",
+        messages: [{ role: "user", content: prompt }]
+      })
     });
 
-    const quizData = JSON.parse(response.text);
+    if (!openRouterRes.ok) {
+      const errorText = await openRouterRes.text();
+      throw new Error(`OpenRouter API error: ${openRouterRes.status} - ${errorText}`);
+    }
+
+    const data = await openRouterRes.json();
+    let responseText = data.choices[0].message.content.trim();
+    
+    // Clean up markdown block if the model ignores the instruction
+    if (responseText.startsWith("```json")) {
+      responseText = responseText.replace(/^```json\n?/, "").replace(/```$/, "").trim();
+    } else if (responseText.startsWith("```")) {
+      responseText = responseText.replace(/^```\n?/, "").replace(/```$/, "").trim();
+    }
+
+    const quizData = JSON.parse(responseText);
     res.json(quizData);
   } catch (error) {
     console.error("Quiz generation error:", error);
     if (error.message && error.message.includes("429")) {
-      return res.status(429).json({ error: "Gemini API rate limit exceeded. Please wait about 1 minute and try again." });
+      return res.status(429).json({ error: "OpenRouter API rate limit exceeded. Please wait and try again." });
     }
     res.status(500).json({ error: error.message || "Failed to generate quiz. Please try again." });
   }
