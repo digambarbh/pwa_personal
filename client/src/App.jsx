@@ -1,6 +1,6 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { Timer, BookOpen } from "lucide-react";
+import { Timer as TimerIcon, BookOpen } from "lucide-react";
 import BottomNav from "./components/BottomNav";
 import Dashboard from "./pages/Dashboard";
 import Roadmap from "./pages/Roadmap";
@@ -37,7 +37,7 @@ function AppContent() {
         </Routes>
         <div className="bottom-nav">
           <button className={`nav-item ${location.pathname.includes('/timer') || location.pathname === '/' ? 'active' : ''}`} onClick={() => navigate('/timer')}>
-            <Timer size={28} strokeWidth={location.pathname.includes('/timer') || location.pathname === '/' ? 2.5 : 2} className="nav-icon" style={{ color: (location.pathname.includes('/timer') || location.pathname === '/') ? 'var(--green)' : 'var(--text)' }} />
+            <TimerIcon size={28} strokeWidth={location.pathname.includes('/timer') || location.pathname === '/' ? 2.5 : 2} className="nav-icon" style={{ color: (location.pathname.includes('/timer') || location.pathname === '/') ? 'var(--green)' : 'var(--text)' }} />
           </button>
           <button className={`nav-item ${location.pathname.includes('/learning') ? 'active' : ''}`} onClick={() => navigate('/learning')}>
             <BookOpen size={28} strokeWidth={location.pathname.includes('/learning') ? 2.5 : 2} className="nav-icon" style={{ color: location.pathname.includes('/learning') ? 'var(--green)' : 'var(--text)' }} />
