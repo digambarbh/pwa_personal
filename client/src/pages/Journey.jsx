@@ -154,13 +154,32 @@ export default function Journey() {
 
       <div className="card plain">
         <h2>Study time — last 14 days</h2>
-        <ResponsiveContainer width="100%" height={160}>
-          <BarChart data={studyChartData} margin={{ top: 10, right: 8, left: -20, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={studyChartData} margin={{ top: 20, right: 8, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id="neonPurple" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#b142ff" stopOpacity={1}/>
+                <stop offset="100%" stopColor="#b142ff" stopOpacity={0.2}/>
+              </linearGradient>
+              <filter id="glowPurple" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             <CartesianGrid stroke={CHART_GRID} vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="day" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
             <YAxis stroke={CHART_TEXT} fontSize={11} axisLine={false} tickLine={false} tickMargin={8} />
-            <Tooltip {...tooltipStyle()} formatter={(v) => [`${v} min`, "studied"]} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-            <Bar dataKey="minutes" fill={CHART_AMBER} radius={[4, 4, 0, 0]} maxBarSize={30} />
+            <Tooltip
+              contentStyle={{ background: "#0a0d14", border: "1px solid #1c2333", borderRadius: 8, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
+              labelStyle={{ color: "#7d8590" }}
+              itemStyle={{ color: "#b142ff", textShadow: "0 0 8px rgba(177,66,255,0.6)" }}
+              cursor={{ fill: 'rgba(177, 66, 255, 0.08)' }}
+              formatter={(v) => [`${v} min`, "studied"]} 
+            />
+            <Bar dataKey="minutes" fill="url(#neonPurple)" radius={[8, 8, 0, 0]} maxBarSize={16} filter="url(#glowPurple)" />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -181,19 +200,31 @@ export default function Journey() {
         {scoreChartData.length === 0 ? (
           <div className="empty">No {SCORE_LABEL[scoreType]} scores logged yet.</div>
         ) : (
-          <ResponsiveContainer width="100%" height={160}>
-            <AreaChart data={scoreChartData} margin={{ top: 10, right: 8, left: -20, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={180}>
+            <AreaChart data={scoreChartData} margin={{ top: 20, right: 8, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={CHART_GREEN} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={CHART_GREEN} stopOpacity={0}/>
+                  <stop offset="0%" stopColor="#39ff14" stopOpacity={0.6}/>
+                  <stop offset="100%" stopColor="#39ff14" stopOpacity={0}/>
                 </linearGradient>
+                <filter id="glowGreen" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
               <CartesianGrid stroke={CHART_GRID} vertical={false} strokeDasharray="3 3" />
               <XAxis dataKey="date" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
               <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} axisLine={false} tickLine={false} tickMargin={8} />
-              <Tooltip {...tooltipStyle()} formatter={(v) => [`${v}%`, "score"]} />
-              <Area type="monotone" dataKey="pct" stroke={CHART_GREEN} strokeWidth={2} fill="url(#colorScore)" activeDot={{ r: 4, stroke: "var(--surface)", strokeWidth: 2, fill: CHART_GREEN }} />
+              <Tooltip 
+                contentStyle={{ background: "#0a0d14", border: "1px solid #1c2333", borderRadius: 8, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
+                labelStyle={{ color: "#7d8590" }}
+                itemStyle={{ color: "#39ff14", textShadow: "0 0 8px rgba(57,255,20,0.6)" }}
+                formatter={(v) => [`${v}%`, "score"]} 
+              />
+              <Area type="monotone" dataKey="pct" stroke="#39ff14" strokeWidth={3} fill="url(#colorScore)" activeDot={{ r: 6, stroke: "#0a0d14", strokeWidth: 2, fill: "#39ff14" }} filter="url(#glowGreen)" />
             </AreaChart>
           </ResponsiveContainer>
         )}

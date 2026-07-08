@@ -114,19 +114,32 @@ export default function Dashboard() {
         </div>
 
         <div className="section-title">Progress by phase</div>
-        <ResponsiveContainer width="100%" height={160}>
+        <ResponsiveContainer width="100%" height={180}>
           <BarChart data={phaseData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+            <defs>
+              <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#00f3ff" stopOpacity={1}/>
+                <stop offset="100%" stopColor="#00f3ff" stopOpacity={0.2}/>
+              </linearGradient>
+              <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} vertical={false} />
             <XAxis dataKey="name" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
             <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} axisLine={false} tickLine={false} tickMargin={8} />
             <Tooltip
               formatter={(v) => [`${v}%`, "complete"]}
-              contentStyle={{ background: "#141a21", border: "1px solid #2b333d", borderRadius: 6, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
+              contentStyle={{ background: "#0a0d14", border: "1px solid #1c2333", borderRadius: 8, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
               labelStyle={{ color: "#7d8590" }}
-              itemStyle={{ color: "#c9d1d9" }}
-              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+              itemStyle={{ color: "#00f3ff", textShadow: "0 0 8px rgba(0,243,255,0.6)" }}
+              cursor={{ fill: 'rgba(0, 243, 255, 0.08)' }}
             />
-            <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} maxBarSize={40} />
+            <Bar dataKey="pct" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} maxBarSize={20} filter="url(#glowCyan)" />
           </BarChart>
         </ResponsiveContainer>
 
