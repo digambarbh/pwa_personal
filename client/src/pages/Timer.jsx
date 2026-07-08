@@ -28,6 +28,7 @@ export default function Timer() {
   const [error, setError] = useState(null);
   const [justLogged, setJustLogged] = useState(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [objective, setObjective] = useState("");
   
   const intervalRef = useRef(null);
 
@@ -142,6 +143,40 @@ export default function Timer() {
         
         <h1>{mode === "focus" ? "Focus Timer" : "Break Timer"}</h1>
         <div className="sub">{mode === "focus" ? "pick a duration, hit start, just study" : "relax and recharge"}</div>
+        
+        {mode === "focus" && !running && elapsedSeconds === 0 && (
+          <div style={{ margin: "20px auto", width: "80%" }}>
+            <input 
+              type="text" 
+              className="form-input" 
+              placeholder="What is your focus objective? (e.g. Solve 2 DP problems)" 
+              value={objective} 
+              onChange={(e) => setObjective(e.target.value)}
+              style={{ width: "100%", textAlign: "center", fontSize: "16px", padding: "10px", borderColor: "#79b8ff", color: "#c9d1d9", backgroundColor: "transparent" }}
+            />
+          </div>
+        )}
+
+        {mode === "focus" && (running || elapsedSeconds > 0) && objective && (
+          <div style={{
+            margin: "20px auto",
+            padding: "12px 20px",
+            backgroundColor: "rgba(121, 184, 255, 0.1)",
+            border: "1px solid #79b8ff",
+            borderRadius: "8px",
+            color: "#79b8ff",
+            fontSize: "18px",
+            fontWeight: "bold",
+            textAlign: "center",
+            width: "fit-content",
+            maxWidth: "90%",
+            boxShadow: "0 0 15px rgba(121, 184, 255, 0.2)",
+            wordBreak: "break-word"
+          }}>
+            🎯 {objective}
+          </div>
+        )}
+
         {error && <div className="error-banner">{error}</div>}
 
         <div style={{ display: "flex", justifyContent: "center", margin: "10px 0 20px" }}>
