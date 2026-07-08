@@ -54,15 +54,17 @@ export default function Dashboard() {
     api.getStudySummary().then(setStudySummary).catch(() => {});
   }, []);
 
-  const phaseData = useMemo(() => {
+  const phaseHeatmapData = useMemo(() => {
     return PHASES.map((phase) => {
-      const ids = [];
+      const cells = [];
       phase.weeks.forEach((w) => {
-        for (let i = 1; i <= 7; i++) ids.push(`${w}-day${i}`);
+        for (let i = 1; i <= 7; i++) {
+          const id = `${w}-day${i}`;
+          const isDone = tasks.some(t => t.taskId === id && t.done);
+          cells.push({ id, isDone });
+        }
       });
-      const done = tasks.filter((t) => ids.includes(t.taskId) && t.done).length;
-      const pctVal = ids.length ? Math.round((done / ids.length) * 100) : 0;
-      return { name: `P${phase.id}`, pct: pctVal };
+      return { name: `Phase ${phase.id}`, cells };
     });
   }, [tasks]);
 
@@ -114,34 +116,23 @@ export default function Dashboard() {
         </div>
 
         <div className="section-title">Progress by phase</div>
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={phaseData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-            <defs>
-              <linearGradient id="neonCyan" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00f3ff" stopOpacity={1}/>
-                <stop offset="100%" stopColor="#00f3ff" stopOpacity={0.2}/>
-              </linearGradient>
-              <filter id="glowCyan" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} vertical={false} />
-            <XAxis dataKey="name" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
-            <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} axisLine={false} tickLine={false} tickMargin={8} />
-            <Tooltip
-              formatter={(v) => [`${v}%`, "complete"]}
-              contentStyle={{ background: "#0a0d14", border: "1px solid #1c2333", borderRadius: 8, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
-              labelStyle={{ color: "#7d8590" }}
-              itemStyle={{ color: "#00f3ff", textShadow: "0 0 8px rgba(0,243,255,0.6)" }}
-              cursor={{ fill: 'rgba(0, 243, 255, 0.08)' }}
-            />
-            <Bar dataKey="pct" fill="url(#neonCyan)" radius={[8, 8, 0, 0]} maxBarSize={20} filter="url(#glowCyan)" />
-          </BarChart>
-        </ResponsiveContainer>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#0a0d14', padding: '16px', borderRadius: '8px', border: '1px solid #1c2333', marginBottom: '14px' }}>
+          {phaseHeatmapData.map(phase => (
+            <div key={phase.name} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '60px', fontFamily: 'var(--mono)', fontSize: '11.5px', color: 'var(--dim)', textTransform: 'uppercase' }}>{phase.name}</div>
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', flex: 1 }}>
+                {phase.cells.map(c => (
+                  <div key={c.id} style={{ 
+                    width: '10px', height: '10px', borderRadius: '2px',
+                    background: c.isDone ? '#00f3ff' : '#141a21',
+                    boxShadow: c.isDone ? '0 0 6px rgba(0,243,255,0.6)' : 'none',
+                    border: c.isDone ? 'none' : '1px solid #2b333d'
+                  }} title={c.id} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
         <div className="section-title">Daily Goals</div>
         <div className="stats" style={{ marginBottom: 20 }}>

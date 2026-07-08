@@ -157,8 +157,8 @@ h2 { font-family: var(--mono); font-size: 15px; margin: 0 0 10px; color: var(--t
 
 .heatmap { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 14px; }
 .heatmap.wide { grid-template-columns: repeat(14, 1fr); }
-.cell { aspect-ratio: 1; border-radius: 3px; background: var(--surface2); border: 1px solid var(--border); }
-.cell.hit { background: var(--green); border-color: var(--green); }
+.cell { aspect-ratio: 1; border-radius: 3px; background: #0a0d14; border: 1px solid #1c2333; transition: all 0.2s ease; }
+.cell.hit { background: #39ff14; border: none; box-shadow: 0 0 8px rgba(57, 255, 20, 0.5); }
 .cell.today { outline: 2px solid var(--amber); outline-offset: 1px; }
 
 /* ---------- Roadmap ---------- */

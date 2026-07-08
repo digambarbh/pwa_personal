@@ -46,13 +46,17 @@ export default function Journey() {
     })();
   }, []);
 
-  const phaseData = useMemo(() => {
+  const phaseHeatmapData = useMemo(() => {
     return PHASES.map((phase) => {
-      const ids = [];
-      phase.weeks.forEach((w) => ids.push(`${w}-dsa`, `${w}-core`, `${w}-project`));
-      const doneCount = tasks.filter((t) => ids.includes(t.taskId) && t.done).length;
-      const pct = ids.length ? Math.round((doneCount / ids.length) * 100) : 0;
-      return { name: `P${phase.id}`, pct };
+      const cells = [];
+      phase.weeks.forEach((w) => {
+        ['dsa', 'core', 'project'].forEach(tType => {
+          const id = `${w}-${tType}`;
+          const isDone = tasks.some(t => t.taskId === id && t.done);
+          cells.push({ id, isDone });
+        });
+      });
+      return { name: `Phase ${phase.id}`, cells };
     });
   }, [tasks]);
 
@@ -118,15 +122,23 @@ export default function Journey() {
 
       <div className="card plain">
         <h2>Roadmap progress by phase</h2>
-        <ResponsiveContainer width="100%" height={160}>
-          <BarChart data={phaseData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-            <CartesianGrid stroke={CHART_GRID} vertical={false} />
-            <XAxis dataKey="name" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" />
-            <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} />
-            <Tooltip {...tooltipStyle()} formatter={(v) => [`${v}%`, "complete"]} />
-            <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: '#0a0d14', padding: '16px', borderRadius: '8px', border: '1px solid #1c2333' }}>
+          {phaseHeatmapData.map(phase => (
+            <div key={phase.name} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '60px', fontFamily: 'var(--mono)', fontSize: '11.5px', color: 'var(--dim)', textTransform: 'uppercase' }}>{phase.name}</div>
+              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', flex: 1 }}>
+                {phase.cells.map(c => (
+                  <div key={c.id} style={{ 
+                    width: '12px', height: '12px', borderRadius: '2px',
+                    background: c.isDone ? '#00f3ff' : '#141a21',
+                    boxShadow: c.isDone ? '0 0 8px rgba(0,243,255,0.6)' : 'none',
+                    border: c.isDone ? 'none' : '1px solid #2b333d'
+                  }} title={c.id} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="card plain">
