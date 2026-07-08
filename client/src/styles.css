@@ -211,17 +211,57 @@ h2 { font-family: var(--mono); font-size: 15px; margin: 0 0 10px; color: var(--t
   position: fixed; bottom: 0; left: 0; right: 0;
   height: calc(var(--nav-h) + var(--safe-bottom));
   padding-bottom: var(--safe-bottom);
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  display: flex;
-  z-index: 10;
+  background: rgba(20, 26, 33, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex; justify-content: space-around; align-items: center;
+  z-index: 50;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
 }
+
+.light .bottom-nav {
+  background: rgba(255, 255, 255, 0.85);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.05);
+}
+
 .nav-item {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; color: var(--dim); font-family: var(--mono); font-size: 10.5px;
+  gap: 4px; color: var(--dim); font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+  height: 100%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; cursor: pointer; text-decoration: none; border: none; background: transparent; padding: 0; margin: 0;
 }
+
+.nav-item:active { transform: scale(0.92); }
+
 .nav-item.active { color: var(--green); }
-.nav-icon { font-size: 19px; line-height: 1; }
+
+.nav-icon {
+  font-size: 20px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 32px; border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-item.active .nav-icon {
+  background: rgba(57, 211, 83, 0.15);
+  transform: translateY(-2px);
+}
+.light .nav-item.active .nav-icon { background: rgba(22, 163, 74, 0.15); }
+
+/* Active dot indicator */
+.nav-item::after {
+  content: ''; position: absolute; bottom: 4px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--green);
+  opacity: 0; transform: scale(0); transition: all 0.3s ease;
+}
+.nav-item.active::after { opacity: 1; transform: scale(1); }
+
+@media (max-width: 360px) {
+  .nav-item span:last-child, .nav-item div:last-child { display: none; }
+  .nav-item::after { bottom: 12px; }
+}
 
 /* ---------- Wider screens: nicer max-width, more breathing room ---------- */
 @media (min-width: 640px) {

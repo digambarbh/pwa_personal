@@ -35,13 +35,13 @@ function AppContent() {
           <Route path="/learning" element={<Learning />} />
         </Routes>
         <div className="bottom-nav">
-          <button className="nav-item" onClick={() => navigate('/timer')} style={{ background: 'transparent', border: 'none', color: location.pathname.includes('/timer') ? 'var(--text)' : 'var(--dim)'}}>
+          <button className={`nav-item ${location.pathname.includes('/timer') || location.pathname === '/' ? 'active' : ''}`} onClick={() => navigate('/timer')}>
             <div className="nav-icon">⏱</div>
-            <div>Focus</div>
+            <span>Focus</span>
           </button>
-          <button className="nav-item" onClick={() => navigate('/learning')} style={{ background: 'transparent', border: 'none', color: location.pathname.includes('/learning') ? 'var(--text)' : 'var(--dim)'}}>
+          <button className={`nav-item ${location.pathname.includes('/learning') ? 'active' : ''}`} onClick={() => navigate('/learning')}>
             <div className="nav-icon">📖</div>
-            <div>Notes</div>
+            <span>Notes</span>
           </button>
         </div>
       </>
