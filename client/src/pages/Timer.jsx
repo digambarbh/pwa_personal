@@ -125,7 +125,7 @@ export default function Timer() {
   };
 
   const pct = Math.round(((durationMin * 60 - secondsLeft) / (durationMin * 60)) * 100);
-  const circumference = 2 * Math.PI * 90;
+  const circumference = 2 * Math.PI * 100;
   const dashOffset = circumference - (pct / 100) * circumference;
 
   return (
@@ -152,7 +152,7 @@ export default function Timer() {
               placeholder="What is your focus objective? (e.g. Solve 2 DP problems)" 
               value={objective} 
               onChange={(e) => setObjective(e.target.value)}
-              style={{ width: "100%", textAlign: "center", fontSize: "16px", padding: "10px", borderColor: "#79b8ff", color: "#c9d1d9", backgroundColor: "transparent" }}
+              style={{ width: "100%", textAlign: "center", fontSize: "15px", padding: "14px", borderColor: "#1c2333", color: "#00f3ff", backgroundColor: "#0a0d14", boxShadow: "inset 0 2px 6px rgba(0,0,0,0.5)", borderRadius: "10px" }}
             />
           </div>
         )}
@@ -160,17 +160,17 @@ export default function Timer() {
         {mode === "focus" && (running || elapsedSeconds > 0) && objective && (
           <div style={{
             margin: "20px auto",
-            padding: "12px 20px",
-            backgroundColor: "rgba(121, 184, 255, 0.1)",
-            border: "1px solid #79b8ff",
-            borderRadius: "8px",
-            color: "#79b8ff",
-            fontSize: "18px",
-            fontWeight: "bold",
+            padding: "14px 24px",
+            backgroundColor: "#0a0d14",
+            border: "1px solid #00f3ff",
+            borderRadius: "12px",
+            color: "#00f3ff",
+            fontSize: "16px",
             textAlign: "center",
             width: "fit-content",
             maxWidth: "90%",
-            boxShadow: "0 0 15px rgba(121, 184, 255, 0.2)",
+            boxShadow: "0 0 12px rgba(0, 243, 255, 0.4)",
+            textShadow: "0 0 6px rgba(0, 243, 255, 0.6)",
             wordBreak: "break-word"
           }}>
             🎯 {objective}
@@ -179,24 +179,39 @@ export default function Timer() {
 
         {error && <div className="error-banner">{error}</div>}
 
-        <div style={{ display: "flex", justifyContent: "center", margin: "10px 0 20px" }}>
-          <svg width="220" height="220" viewBox="0 0 220 220">
-            <circle cx="110" cy="110" r="90" fill="none" stroke="#1c232c" strokeWidth="14" />
+        <div style={{ display: "flex", justifyContent: "center", margin: "10px 0 30px" }}>
+          <svg width="240" height="240" viewBox="0 0 240 240">
+            <defs>
+              <filter id="timerGlowGreen" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <filter id="timerGlowPurple" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <filter id="timerGlowAmber" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+            </defs>
+            <circle cx="120" cy="120" r="100" fill="none" stroke="#0a0d14" strokeWidth="8" style={{ filter: "drop-shadow(0 0 4px #000)" }} />
             <circle
-              cx="110" cy="110" r="90" fill="none"
-              stroke={running ? "#39d353" : "#d29922"}
-              strokeWidth="14"
+              cx="120" cy="120" r="100" fill="none"
+              stroke={running ? (mode === "focus" ? "#39ff14" : "#b142ff") : "#ffbd2e"}
+              strokeWidth="10"
               strokeDasharray={circumference}
               strokeDashoffset={dashOffset}
               strokeLinecap="round"
-              transform="rotate(-90 110 110)"
+              transform="rotate(-90 120 120)"
               style={{ transition: "stroke-dashoffset 1s linear" }}
+              filter={running ? (mode === "focus" ? "url(#timerGlowGreen)" : "url(#timerGlowPurple)") : "url(#timerGlowAmber)"}
             />
-            <text x="110" y="103" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="34" fill="#c9d1d9">
+            <text x="120" y="112" textAnchor="middle" fontFamily="var(--mono)" fontSize="48" fontWeight="bold" fill={running ? (mode === "focus" ? "#39ff14" : "#b142ff") : "#ffbd2e"} style={{ textShadow: `0 0 12px ${running ? (mode === 'focus' ? 'rgba(57,255,20,0.6)' : 'rgba(177,66,255,0.6)') : 'rgba(255,189,46,0.6)'}` }}>
               {formatTime(secondsLeft)}
             </text>
-            <text x="110" y="128" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="12" fill="#7d8590">
-              {running ? (mode === "focus" ? "focusing…" : "on break…") : secondsLeft === 0 ? "session complete" : "ready"}
+            <text x="120" y="148" textAnchor="middle" fontFamily="var(--mono)" fontSize="13" fill="#7d8590" style={{ letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              {running ? (mode === "focus" ? "focusing" : "on break") : secondsLeft === 0 ? "complete" : "ready"}
             </text>
           </svg>
         </div>
