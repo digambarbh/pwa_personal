@@ -114,18 +114,19 @@ export default function Dashboard() {
         </div>
 
         <div className="section-title">Progress by phase</div>
-        <ResponsiveContainer width="100%" height={130}>
-          <BarChart data={phaseData} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
-            <CartesianGrid stroke={CHART_GRID} vertical={false} />
-            <XAxis dataKey="name" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" />
-            <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} />
+        <ResponsiveContainer width="100%" height={160}>
+          <BarChart data={phaseData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke={CHART_GRID} vertical={false} />
+            <XAxis dataKey="name" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
+            <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} axisLine={false} tickLine={false} tickMargin={8} />
             <Tooltip
               formatter={(v) => [`${v}%`, "complete"]}
               contentStyle={{ background: "#141a21", border: "1px solid #2b333d", borderRadius: 6, fontSize: 12, fontFamily: "ui-monospace, monospace" }}
               labelStyle={{ color: "#7d8590" }}
               itemStyle={{ color: "#c9d1d9" }}
+              cursor={{ fill: 'rgba(255,255,255,0.05)' }}
             />
-            <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="pct" fill={CHART_GREEN} radius={[4, 4, 0, 0]} maxBarSize={40} />
           </BarChart>
         </ResponsiveContainer>
 

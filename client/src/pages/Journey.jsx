@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  ResponsiveContainer, BarChart, Bar, LineChart, Line,
+  ResponsiveContainer, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
 import TermHeader from "../components/TermHeader";
@@ -155,12 +155,12 @@ export default function Journey() {
       <div className="card plain">
         <h2>Study time — last 14 days</h2>
         <ResponsiveContainer width="100%" height={160}>
-          <BarChart data={studyChartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-            <CartesianGrid stroke={CHART_GRID} vertical={false} />
-            <XAxis dataKey="day" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" />
-            <YAxis stroke={CHART_TEXT} fontSize={11} />
-            <Tooltip {...tooltipStyle()} formatter={(v) => [`${v} min`, "studied"]} />
-            <Bar dataKey="minutes" fill={CHART_AMBER} radius={[3, 3, 0, 0]} />
+          <BarChart data={studyChartData} margin={{ top: 10, right: 8, left: -20, bottom: 0 }}>
+            <CartesianGrid stroke={CHART_GRID} vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="day" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
+            <YAxis stroke={CHART_TEXT} fontSize={11} axisLine={false} tickLine={false} tickMargin={8} />
+            <Tooltip {...tooltipStyle()} formatter={(v) => [`${v} min`, "studied"]} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+            <Bar dataKey="minutes" fill={CHART_AMBER} radius={[4, 4, 0, 0]} maxBarSize={30} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -182,13 +182,19 @@ export default function Journey() {
           <div className="empty">No {SCORE_LABEL[scoreType]} scores logged yet.</div>
         ) : (
           <ResponsiveContainer width="100%" height={160}>
-            <LineChart data={scoreChartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid stroke={CHART_GRID} vertical={false} />
-              <XAxis dataKey="date" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" />
-              <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} />
+            <AreaChart data={scoreChartData} margin={{ top: 10, right: 8, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_GREEN} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={CHART_GREEN} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid stroke={CHART_GRID} vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="date" stroke={CHART_TEXT} fontSize={11} fontFamily="ui-monospace, monospace" axisLine={false} tickLine={false} tickMargin={8} />
+              <YAxis stroke={CHART_TEXT} fontSize={11} domain={[0, 100]} axisLine={false} tickLine={false} tickMargin={8} />
               <Tooltip {...tooltipStyle()} formatter={(v) => [`${v}%`, "score"]} />
-              <Line type="monotone" dataKey="pct" stroke={CHART_GREEN} strokeWidth={2} dot={{ r: 3, fill: CHART_GREEN }} />
-            </LineChart>
+              <Area type="monotone" dataKey="pct" stroke={CHART_GREEN} strokeWidth={2} fill="url(#colorScore)" activeDot={{ r: 4, stroke: "var(--surface)", strokeWidth: 2, fill: CHART_GREEN }} />
+            </AreaChart>
           </ResponsiveContainer>
         )}
       </div>
