@@ -1,5 +1,6 @@
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { Timer, BookOpen } from "lucide-react";
 import BottomNav from "./components/BottomNav";
 import Dashboard from "./pages/Dashboard";
 import Roadmap from "./pages/Roadmap";
@@ -36,12 +37,10 @@ function AppContent() {
         </Routes>
         <div className="bottom-nav">
           <button className={`nav-item ${location.pathname.includes('/timer') || location.pathname === '/' ? 'active' : ''}`} onClick={() => navigate('/timer')}>
-            <div className="nav-icon">⏱</div>
-            <span>Focus</span>
+            <Timer size={28} strokeWidth={location.pathname.includes('/timer') || location.pathname === '/' ? 2.5 : 2} className="nav-icon" style={{ color: (location.pathname.includes('/timer') || location.pathname === '/') ? 'var(--green)' : 'var(--text)' }} />
           </button>
           <button className={`nav-item ${location.pathname.includes('/learning') ? 'active' : ''}`} onClick={() => navigate('/learning')}>
-            <div className="nav-icon">📖</div>
-            <span>Notes</span>
+            <BookOpen size={28} strokeWidth={location.pathname.includes('/learning') ? 2.5 : 2} className="nav-icon" style={{ color: location.pathname.includes('/learning') ? 'var(--green)' : 'var(--text)' }} />
           </button>
         </div>
       </>

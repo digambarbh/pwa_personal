@@ -1,28 +1,41 @@
 import { NavLink } from "react-router-dom";
+import { Home, Map, BookOpen, Building2, MapPin, Settings } from "lucide-react";
 
 const items = [
-  { to: "/", icon: "▣", label: "Home", end: true },
-  { to: "/roadmap", icon: "☰", label: "Roadmap" },
-  { to: "/learning", icon: "📖", label: "Notes" },
-  { to: "/companies", icon: "🏢", label: "Companies" },
-  { to: "/journey", icon: "◈", label: "Journey" },
-  { to: "/settings", icon: "⚙", label: "Settings" },
+  { to: "/", icon: Home, end: true },
+  { to: "/roadmap", icon: Map },
+  { to: "/learning", icon: BookOpen },
+  { to: "/companies", icon: Building2 },
+  { to: "/journey", icon: MapPin },
+  { to: "/settings", icon: Settings },
 ];
 
 export default function BottomNav() {
   return (
     <nav className="bottom-nav">
-      {items.map((item) => (
-        <NavLink
-          key={item.to}
-          to={item.to}
-          end={item.end}
-          className={({ isActive }) => "nav-item" + (isActive ? " active" : "")}
-        >
-          <span className="nav-icon">{item.icon}</span>
-          <span>{item.label}</span>
-        </NavLink>
-      ))}
+      {items.map((item) => {
+        const Icon = item.icon;
+        return (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.end}
+            className={({ isActive }) => "nav-item" + (isActive ? " active" : "")}
+          >
+            {({ isActive }) => (
+              <Icon 
+                size={28} 
+                strokeWidth={isActive ? 2.5 : 2} 
+                className="nav-icon"
+                style={{ 
+                  color: isActive ? 'var(--green)' : 'var(--text)',
+                  transition: 'all 0.2s ease'
+                }} 
+              />
+            )}
+          </NavLink>
+        );
+      })}
     </nav>
   );
 }
