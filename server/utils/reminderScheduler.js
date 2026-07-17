@@ -9,7 +9,7 @@ export default function startReminderScheduler() {
       const subs = await Subscription.find();
       if (!subs.length) return;
       const payload = JSON.stringify({
-        title: "Placement Tracker",
+        title: "Prep Insta",
         body: "Don't forget to log today's progress and keep your streak alive.",
       });
       await Promise.allSettled(

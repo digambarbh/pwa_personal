@@ -12,7 +12,7 @@ registerRoute(
 self.addEventListener("push", (event) => {
   const data = event.data ? event.data.json() : {};
   event.waitUntil(
-    self.registration.showNotification(data.title || "Placement Tracker", {
+    self.registration.showNotification(data.title || "Prep Insta", {
       body: data.body || "Don't forget to log today's progress.",
       icon: "/pwa-192.png",
       badge: "/pwa-192.png",
