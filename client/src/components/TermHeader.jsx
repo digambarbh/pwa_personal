@@ -15,7 +15,7 @@ export default function TermHeader({ path }) {
           onClick={toggleHideMode} 
           style={{ cursor: "default", userSelect: "none" }}
         >
-          digs-space {path}
+          prep-insta {path}
         </span>
       </div>
       <button className="theme-toggle" onClick={toggleTheme} type="button" aria-label="Toggle theme" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '4px' }}>
