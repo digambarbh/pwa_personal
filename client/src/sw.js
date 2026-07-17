@@ -14,8 +14,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || "Prep Insta", {
       body: data.body || "Don't forget to log today's progress.",
-      icon: "/pwa-192.png",
-      badge: "/pwa-192.png",
+      icon: "/icon.svg",
+      badge: "/icon.svg",
     })
   );
 });
