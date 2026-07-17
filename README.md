@@ -1,4 +1,4 @@
-# Placement Tracker — React + Express + MongoDB
+# Prep Insta — React + Express + MongoDB
 
 Full-stack placement prep tracker. React (multipage, mobile-first) + Express +
 MongoDB Atlas. Progress and streak are stored in the database, so they're the

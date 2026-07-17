@@ -96,7 +96,7 @@ export default function Dashboard() {
       </div>
 
       <div className="card">
-        <h1>Placement Prep Tracker</h1>
+        <h1>Prep Insta</h1>
         <div className="sub">synced to MongoDB · updates in real time</div>
 
         {error && <div className="error-banner">{error}</div>}
